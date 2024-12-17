@@ -1,87 +1,62 @@
 
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-from MoviWeb_APP.datamanager.data_manager_interface import DataManagerInterface
+from flask_sqlalchemy import SQLAlchemy
+from datamanager.DataManagerInterface import DataManagerInterface
+from datamanager.data_models import User, Movie
 
-# Defining database models
-Base = declarative_base()
+class SQLiteDataManager:
+    def __init__(self):
+        self.db = SQLAlchemy()
 
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    movies = relationship("Movie", back_populates="user")
-
-
-class Movie(Base):
-    __tablename__ = 'movies'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    director = Column(String, nullable=False)
-    year = Column(Integer, nullable=False)
-    rating = Column(Integer, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship("User", back_populates="movies")
-
-
-class SQLiteDataManager(DataManagerInterface):
-
-    def __init__(self, user_movie_database):
-        """Initialize the SQLite database and session."""
-        self.engine = create_engine(f'sqlite:///data/{user_movie_database}.sqlite')
-        Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
-        self.session = self.Session()
-
+    def init_app(self, app):
+        self.db.init_app(app)
+        
     def get_all_users(self):
-        """Fetch a list of all users."""
-        return self.session.query(User).all()
+        """Retrieve all users from the database."""
+        users = User.query.all()
+        return users
 
     def get_user_movies(self, user_id):
-        """Retrieve all movies for a specific user."""
-        user = self.session.query(User).filter_by(id=user_id).first()
-        if user:
-            return user.movies
-        return []
+        """Retrieve all movies for a given user."""
+        movies = Movie.query.filter_by(user_id=user_id).all()
+        return movies
 
     def add_user(self, name):
         """Add a new user to the database."""
         new_user = User(name=name)
-        self.session.add(new_user)
-        self.session.commit()
+        self.db.session.add(new_user)
+        self.db.session.commit()
         return new_user
 
     def add_movie(self, user_id, name, director, year, rating):
-        """Add a new movie for a specific user."""
-        user = self.session.query(User).filter_by(id=user_id).first()
-        if user:
-            new_movie = Movie(
-                name=name, director=director, year=year, rating=rating, user=user
-            )
-            self.session.add(new_movie)
-            self.session.commit()
-            return new_movie
-        raise ValueError("User not found")
+        """Add a new movie to the database."""
+        new_movie = Movie(user_id=user_id, name=name, director=director, year=year, rating=rating)
+        self.db.session.add(new_movie)
+        self.db.session.commit()
+        return new_movie
 
-    def update_movie(self, movie_id, name, director, year, rating):
-        """Modify details of a specific movie."""
-        movie = self.session.query(Movie).filter_by(id=movie_id).first()
-        if movie:
+    def update_movie(self, movie_id, name=None, director=None, year=None, rating=None):
+        """Update details of a specific movie."""
+        movie = Movie.query.get(movie_id)
+        if not movie:
+            return None
+        if name is not None:
             movie.name = name
+        if director is not None:
             movie.director = director
+        if year is not None:
             movie.year = year
+        if rating is not None:
             movie.rating = rating
-            self.session.commit()
-            return movie
-        raise ValueError("Movie not found")
+        self.db.session.commit()
+        return movie
 
     def delete_movie(self, movie_id):
-        """Delete a specific movie."""
-        movie = self.session.query(Movie).filter_by(id=movie_id).first()
-        if movie:
-            self.session.delete(movie)
-            self.session.commit()
-            return True
-        raise ValueError("Movie not found")
+        """Delete a specific movie from the database."""
+        movie = Movie.query.get(movie_id)
+        if not movie:
+            return None
+        self.db.session.delete(movie)
+        self.db.session.commit()
+        return movie
+    
+    
