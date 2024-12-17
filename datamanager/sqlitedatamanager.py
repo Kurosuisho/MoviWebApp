@@ -1,14 +1,16 @@
 
 from flask_sqlalchemy import SQLAlchemy
 from datamanager.DataManagerInterface import DataManagerInterface
-from datamanager.data_models import User, Movie
+from datamanager.data_models import db, User, Movie
 
 class SQLiteDataManager:
     def __init__(self):
-        self.db = SQLAlchemy()
+        self.db = db  # Use the shared db instance
 
     def init_app(self, app):
         self.db.init_app(app)
+        with app.app_context():
+            self.db.create_all()
         
     def get_all_users(self):
         """Retrieve all users from the database."""
