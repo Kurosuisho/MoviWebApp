@@ -2,7 +2,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from data_manager_interface import DataManagerInterface
+from MoviWeb_APP.datamanager.data_manager_interface import DataManagerInterface
 
 # Defining database models
 Base = declarative_base()
