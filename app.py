@@ -123,10 +123,10 @@ def update_movie(user_id, movie_id):
     )
 
 
-# @app.route('/users/<user_id>/delete_movie/<movie_id>')
-# def pass():
-#     pass
-
+@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>')
+def delete_movie(user_id, movie_id):
+    data_manager.delete_movie(movie_id)
+    return redirect(f'/users/{user_id}')
 
 
 if __name__ == '__main__':
