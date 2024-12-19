@@ -1,0 +1,12 @@
+<h1>{{ user.name }}'s Favorite Movies</h1>
+<ul>
+    {% for movie in movies %}
+        <li>
+            <b>{{ movie.name }}</b> ({{ movie.year }}) - Directed by {{ movie.director }} 
+            <br> Rating: {{ movie.rating }}
+            <a href="/users/{{ user.id }}/update_movie/{{ movie.id }}">Edit</a> |
+            <a href="/users/{{ user.id }}/delete_movie/{{ movie.id }}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+<a href="/users/{{ user.id }}/add_movie">Add a new movie</a>

@@ -30,14 +30,22 @@ def list_users():
     return render_template('users.html', users=users)
 
 
-# @app.route('/users')
-# def pass():
-#     pass
-
-
-# @app.route('/users/<user_id>')
-# def pass():
-#     pass
+@app.route('/users/<int:user_id>')
+def user_movies(user_id):
+    
+    users = data_manager.get_all_users()
+    user = None
+    
+    for u in users:
+        if u.id == user_id:
+            user = u
+            break
+        
+    if not user:
+        return "User not found", 404
+    
+    movies = data_manager.get_user_movies(user_id)
+    return render_template('user_movies.html', user=user, movies=movies)
 
 
 # @app.route('/add_user')
