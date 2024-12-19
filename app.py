@@ -89,9 +89,38 @@ def add_movie(user_id):
 
 
 
-# @app.route('/users/<user_id>/update_movie/<movie_id>')
-# def pass():
-#     pass
+@app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
+def update_movie(user_id, movie_id):
+    # Fetch the movie from the database
+    movies = data_manager.get_user_movies(user_id)
+    movie_to_update = next((m for m in movies if m.id == movie_id), None)
+    
+    if not movie_to_update:
+        return "Movie not found", 404
+
+    if request.method == 'POST':
+        # Get updated data from the form
+        name = request.form['name']
+        director = request.form['director']
+        year = request.form['year']
+        rating = request.form['rating']
+
+        # Update the movie in the database
+        data_manager.update_movie(
+            movie_id=movie_id,
+            name=name,
+            director=director,
+            year=year,
+            rating=rating
+        )
+        return redirect(f'/users/{user_id}')
+    
+    # Render the form with current movie details pre-filled
+    return render_template(
+        'update_movie.html', 
+        user_id=user_id, 
+        movie=movie_to_update
+    )
 
 
 # @app.route('/users/<user_id>/delete_movie/<movie_id>')
