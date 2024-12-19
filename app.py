@@ -1,7 +1,14 @@
 from flask import Flask, render_template, request, redirect
 from datamanager.SQLiteDataManager import SQLiteDataManager
+from dotenv import load_dotenv
 import os
+import requests
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Get the API key from the environment variable
+OMDB_API_KEY = os.getenv('OMDB_API_KEY')
 
 app = Flask(__name__)
 
@@ -58,9 +65,28 @@ def add_user():
 
 
 
-# @app.route('/users/<user_id>/add_movie')
-# def pass():
-#     pass
+@app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
+def add_movie(user_id):
+    if request.method == 'POST':
+        # Get the movie title from the form using the "movie" key
+        movie_title = request.form['movie']
+        
+        # Fetch the movie details from OMDb API
+        response = requests.get(f"http://www.omdbapi.com/?t={movie_title}&apikey={OMDB_API_KEY}")
+        movie_data = response.json()
+        
+        # Add the movie to the database using the fetched data
+        data_manager.add_movie(
+            user_id=user_id,
+            name=movie_data.get('Title', movie_title),
+            director=movie_data.get('Director', 'Unknown'),
+            year=movie_data.get('Year', 'Unknown'),
+            rating=movie_data.get('imdbRating', 'N/A')
+        )
+        return redirect(f'/users/{user_id}')
+    
+    return render_template('add_movie.html', user_id=user_id)
+
 
 
 # @app.route('/users/<user_id>/update_movie/<movie_id>')
