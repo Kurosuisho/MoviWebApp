@@ -4,13 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users - MovieWeb App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <style>
+        /* Custom styles for the user list page */
+        .hero {
+            background-color: #00d1b2; /* Bulma's primary color */
+            color: white;
+            margin-bottom: 30px;
+        }
+        .hero .title {
+            font-size: 3rem;
+        }
+        .hero .subtitle {
+            font-size: 1.5rem;
+            font-weight: normal;
+        }
+
+        .user-card {
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .user-card .user-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black; /* Set user name color to black */
+            margin-bottom: 10px;
+        }
+
+        .user-card .user-actions {
+            margin-top: 15px;
+        }
+
+        .user-card .user-actions a {
+            margin-right: 10px;
+        }
+
+        .user-card .user-actions .button {
+            font-size: 0.9rem;
+        }
+
+        .columns.is-multiline {
+            margin-top: 20px;
+        }
+
+        .user-list-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .add-user-button {
+            margin-top: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .user-card {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Users</h1>
-    <ul>
-        {% for user in users %}
-            <li><a href="/users/{{ user.id }}">{{ user.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <!-- Hero Section -->
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">User List</h1>
+                <h2 class="subtitle">Here is a list of all users in the MovieWeb App.</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- User List Section -->
+    <section class="section">
+        <div class="container">
+            <div class="user-list-header">
+                <a href="/add_user" class="button is-link is-large add-user-button">Add New User</a>
+            </div>
+            <div class="columns is-multiline">
+                {% for user in users %}
+                    <div class="column is-4">
+                        <div class="user-card">
+                            <div class="user-name">{{ user.name }}</div>
+                            <div class="user-actions">
+                                <a href="/users/{{ user.id }}" class="button is-info is-small">View Movies</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
 </body>
 </html>

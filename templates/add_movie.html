@@ -1,6 +1,30 @@
-<h1>Add a Movie</h1>
-<form method="POST">
-    <label for="movie">Movie Title:</label>
-    <input type="text" id="movie" name="movie" required>
-    <button type="submit">Add Movie</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Add a Movie</h1>
+            <form action="/users/{{ user_id }}/add_movie" method="POST">
+                <div class="field">
+                    <label class="label">Movie Title</label>
+                    <div class="control">
+                        <input class="input" type="text" name="movie" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary" type="submit">Add Movie</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

@@ -27,7 +27,7 @@ print(OMDB_API_KEY)  # Add this line temporarily to check if the key is loaded
 
 @app.route('/')
 def home():
-    return "Welcome to MovieWeb App!"
+    return render_template('home.html')
 
 @app.route('/users')
 def list_users():
